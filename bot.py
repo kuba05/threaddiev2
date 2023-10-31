@@ -18,6 +18,11 @@ bot = discord.Bot(intents=discord.Intents.all())
 #bot = discord.Bot(intents=intents)
 
 
+#python magic to autoflush
+_print = print
+def print(*a, **b):
+    b["flush"] = True
+    _print(*a, **b)
 
 
 
