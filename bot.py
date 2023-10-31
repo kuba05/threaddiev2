@@ -229,8 +229,7 @@ async def recolorMe(ctx, role: Option(discord.Role, "select a role"), r: Option(
 async def dump_role(ctx, role: discord.Role):
     await ctx.defer(ephemeral=True)
     await ctx.followup.send(f"DUMPING ROLE {str(role)}")
-    for member in role.members:
-        await ctx.followup.send(str(member))
+    await ctx.followup.send("\n".join(str(member)for member in role.members))
 
 
 @bot.slash_command(name="channel_to_thread", guild_ids=GUILD, description="Convert a channel to a thread with the"
