@@ -220,6 +220,13 @@ async def recolorMe(ctx, role: Option(discord.Role, "select a role"), r: Option(
     await role.edit(colour=discord.Color.from_rgb(r,g,b))
     await ctx.followup.send("done")
 
+@bot.slash_command(name="dump_role", guild_ids=GUILD, description="Dump all players by assigned team")
+async def dump_role(ctx, role: discord.Role):
+    await ctx.defer(ephemeral=True)
+    ctx.followup.send(f"DUMPING ROLE {str(role)}")
+    for member in role.members:
+        ctx.followup.send(str(member))
+
 
 @bot.slash_command(name="channel_to_thread", guild_ids=GUILD, description="Convert a channel to a thread with the"
                                                                     "option to remove the original channel")
