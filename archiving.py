@@ -63,12 +63,11 @@ def doesBelongToSeason(ctx: discord.ApplicationContext, channel: discord.TextCha
     """
     season is marked with the season's number, non-season games have 0. None if not a game channel.
     """
-    if channel.category and cast(discord.CategoryChannel, channel.category.id) in SEASON_GAME_CATEGORY:
-        matched = re.match(SEASON_GAME_MASK, channel.name)
+    matched = re.match(SEASON_GAME_MASK, channel.name)
 
-        # matched as season game
-        if matched:
-            return matched.groups()[0]
+    # matched as season game
+    if matched:
+        return matched.groups()[0]
 
     else:
         matched = re.match(OUTOFSEASON_GAME_MASK, channel.name)
