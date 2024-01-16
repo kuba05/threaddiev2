@@ -118,12 +118,9 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
         channelsToArchive.append((channel, channelToArchiveInto))
 
 
+    displacedChannels = list(set(x[1] for x in channelsToArchive))
 
-    displacedChannels = []
-    for channelToArchiveInto in set(x[1] for x in channelsToArchive):
-        displacedChannels.append((channelToArchiveInto, channelToArchiveInto.position))
-    displacedChannels.sort(key=lambda a: a[1])
-    for channel, position in displacedChannels:
+    for channel in displacedChannels:
         await channel.edit(category=quiteCategory, sync_permissions=True)
 
 
@@ -141,8 +138,7 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
         await asyncio.gather(*allPromises[:ARCHIVING_CHANNELS_AT_ONCE])
         allPromises = allPromises[ARCHIVING_CHANNELS_AT_ONCE:]
     
-    for channel, position in displacedChannels:
-        await channel.move(category=archiveCategory, offset=position, beginning=True)
-        await channel.edit(sync_permissions=True)
+    for channel in displacedChannels:
+        await channel.edit(category=archiveCategory, sync_permissions=True)
 
 
