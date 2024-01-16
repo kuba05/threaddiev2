@@ -130,7 +130,7 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
     async def helperFunction(channels: tuple[discord.TextChannel,discord.TextChannel]):
         channelToArchive: discord.TextChannel = channels[0]
         channelToArchiveInto: discord.TextChannel = channels[1]
-        await moveChannelIntoAThread(ctx=ctx, channel=channelToArchive, name=channel.name, place=channelToArchiveInto)
+        await moveChannelIntoAThread(ctx=ctx, channel=channelToArchive, name=channelToArchive.name, place=channelToArchiveInto)
         await channelToArchive.move(category=moveToCategory, end=True)
 
     allPromises = [helperFunction(channels) for channels in channelsToArchive]
