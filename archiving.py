@@ -4,7 +4,7 @@ import asyncio
 
 import discord
 
-from constants import SEASON_GAME_CATEGORY, SEASON_GAME_MASK, OUTOFSEASON_GAME_MASK, TODO_ARCHIVE_CATEGORY_NAME, DONE_ARCHIVE_CATEGORY_NAME, THE_ARCHIVE_CATEGORY_NAME, QUITE_CATEGORY_NAME
+from constants import ARCHIVING_CHANNELS_AT_ONCE, SEASON_GAME_MASK, OUTOFSEASON_GAME_MASK, TODO_ARCHIVE_CATEGORY_NAME, DONE_ARCHIVE_CATEGORY_NAME, THE_ARCHIVE_CATEGORY_NAME, QUITE_CATEGORY_NAME
 
 async def getCategoryByName(ctx: discord.ApplicationContext, name: str):
     category = discord.utils.get(ctx.guild.categories, name = name)
@@ -138,8 +138,8 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
 
     # we will execute them in groups of 8s to make my life easier
     while len(allPromises) > 0:
-        await asyncio.gather(*allPromises[:8])
-        allPromises = allPromises[8:]
+        await asyncio.gather(*allPromises[:ARCHIVING_CHANNELS_AT_ONCE])
+        allPromises = allPromises[ARCHIVING_CHANNELS_AT_ONCE:]
     
     for channel, position in displacedChannels:
         await channel.move(category=archiveCategory, offset=position, beginning=True)
