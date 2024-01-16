@@ -1,5 +1,5 @@
 from typing import cast
-import re
+import re, sys
 import asyncio
 
 import discord
@@ -43,17 +43,18 @@ async def moveChannelIntoAThread(ctx: discord.ApplicationContext, channel: disco
             except discord.errors.HTTPException as err:
                 print(type(err), err)
             except Exception as e:
+                print(e, file=sys.stderr, flush=True)
                 await ctx.channel.send("Unknown error!")
                 await ctx.channel.send(type(e), e)
 
 
         await thread.remove_user(cast(discord.ClientUser, ctx.bot.user))
-        await ctx.followup.send(f"Moved channel `{channel}` to a thread in `{place}`")
+        await ctx.channel.send(f"Moved channel `{channel}` to a thread in `{place}`")
 
     except (TypeError, discord.DiscordException) as err:
 
         print(type(err), err)
-        await ctx.followup.send(f"Could not move channel to thread\n{type(err)} {err}")
+        await ctx.channel.send(f"Could not move channel to thread\n{type(err)} {err}")
 
     finally:
         await hook.delete(reason=f"Moved channel `{channel}` to a thread in `{place}`. No longer needed")
