@@ -1,5 +1,6 @@
 from typing import cast
 import re
+import asyncio
 
 import discord
 
@@ -93,6 +94,8 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
 
     quiteCategory: discord.CategoryChannel = await getCategoryByName(ctx, QUITE_CATEGORY_NAME)
 
+    channelsToArchive: list[tuple[discord.TextChannel, discord.TextChannel]] = []
+    
     for channel in sourceCategory.text_channels:
         seasonNumber = doesBelongToSeason(ctx, channel)
         
@@ -112,10 +115,33 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
             channelToArchiveInto = await archiveCategory.create_text_channel(targetName)
         channelToArchiveInto = cast(discord.TextChannel, channelToArchiveInto)
 
-        position = channelToArchiveInto.position
-        await channelToArchiveInto.move(category=quiteCategory, end=True)
-        await moveChannelIntoAThread(ctx=ctx, channel=channel, name=channel.name, place=channelToArchiveInto)
-        await channelToArchiveInto.move(category=archiveCategory, offset=position, beginning=True)
+        channelsToArchive.append((channel, channelToArchiveInto))
 
-        await channel.move(category=moveToCategory, end=True)
+
+
+    displacedChannels = []
+    for channelToArchiveInto in set(x[1] for x in channelsToArchive):
+        displacedChannels.append((channelToArchiveInto, channelToArchiveInto.position))
+    displacedChannels.sort(key=lambda a: a[1])
+    for channel, position in displacedChannels:
+        await channel.move(category=quiteCategory, end=True)
+
+
+
+    async def helperFunction(channels: tuple[discord.TextChannel,discord.TextChannel]):
+        channelToArchive: discord.TextChannel = channels[0]
+        channelToArchiveInto: discord.TextChannel = channels[1]
+        await moveChannelIntoAThread(ctx=ctx, channel=channelToArchive, name=channel.name, place=channelToArchiveInto)
+        await channelToArchive.move(category=moveToCategory, end=True)
+
+    allPromises = [helperFunction(channels) for channels in channelsToArchive]
+
+    # we will execute them in groups of 8s to make my life easier
+    while len(allPromises) > 0:
+        await asyncio.gather(*allPromises[:8])
+        allPromises = allPromises[8:]
+    
+    for channel, position in displacedChannels:
+        await channel.move(category=archiveCategory, offset=position, beginning=True)
+
 
