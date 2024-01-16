@@ -124,8 +124,7 @@ async def archiveAllChannelsToBeArchived(ctx:discord.ApplicationContext):
         displacedChannels.append((channelToArchiveInto, channelToArchiveInto.position))
     displacedChannels.sort(key=lambda a: a[1])
     for channel, position in displacedChannels:
-        await channel.move(category=quiteCategory, end=True)
-        await channel.edit(sync_permissions=True)
+        await channel.edit(category=quiteCategory, sync_permissions=True)
 
 
 
