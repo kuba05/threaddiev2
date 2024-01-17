@@ -109,7 +109,7 @@ async def move_marked_channels(ctx: discord.ApplicationContext):
 async def archive_waiting(ctx: discord.ApplicationContext):
     await ctx.defer(ephemeral = True)
     await archiveAllChannelsToBeArchived(ctx)
-    await ctx.followup.send("done")
+    await ctx.channel.send("done")
 
 @bot.event
 async def on_ready():

@@ -36,7 +36,8 @@ async def moveChannelIntoAThread(ctx: discord.ApplicationContext, channel: disco
                     avatar_url = msg.author.display_avatar.url,
                     embeds = msg.embeds,
                     thread = thread,
-                    files = [await f.to_file() for f in msg.attachments]
+                    files = [await f.to_file() for f in msg.attachments],
+                    allowed_mentions = discord.AllowedMentions.none()
                 )
                 
             # Pinned message notifications will be caught as messages with no content
